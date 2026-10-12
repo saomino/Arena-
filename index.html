@@ -367,6 +367,7 @@ const dayDiff=(iso)=>Math.ceil((new Date(iso).getTime()-Date.now())/86400000);
 /* filters state */
 const F={q:"",type:"all",role:"all",from:"all",own:"all"};
 let P=null;let pState="none"; // none | loading | ok | bad | err
+let pDetail="";
 const TOKEN_KEY="arena-token";
 const ownedSet=()=>new Set(P?P.owned:[]);
 let view="animals";
@@ -588,11 +589,11 @@ async function fetchProfile(token){
     const res=await fetch(SB_URL+"/rest/v1/rpc/get_profile",{method:"POST",
       headers:{apikey:SB_KEY,Authorization:"Bearer "+SB_KEY,"Content-Type":"application/json"},
       body:JSON.stringify({p_token:token})});
-    if(!res.ok)throw new Error("http "+res.status);
+    if(!res.ok){let m="";try{m=(await res.text()).slice(0,160)}catch(_){}throw new Error("HTTP "+res.status+(m?" — "+m:""))}
     const data=await res.json();
-    if(data&&typeof data==="object"&&Array.isArray(data.owned)){P=data;pState="ok"}
-    else{P=null;pState="bad";try{localStorage.removeItem(TOKEN_KEY)}catch(e){}}
-  }catch(e){P=null;pState="err"}
+    if(data&&typeof data==="object"&&Array.isArray(data.owned)){P=data;pState="ok";pDetail=""}
+    else{P=null;pState="bad";pDetail="token "+String(token).slice(0,6)+"… ("+String(token).length+" car.) — "+(data===null?"aucun profil trouvé pour ce lien":"réponse inattendue");try{localStorage.removeItem(TOKEN_KEY)}catch(e){}}
+  }catch(e){P=null;pState="err";pDetail=String(e&&e.message||e)}
 }
 function storedToken(){try{return localStorage.getItem(TOKEN_KEY)}catch(e){return null}}
 function afterProfile(){
@@ -642,7 +643,7 @@ function renderMe(){
   if(pState==="loading"){root.innerHTML=h+'<p class="lead">'+L.me_loading+'</p>';return}
   if(pState!=="ok"||!P){
     const msg=pState==="bad"?L.me_bad:pState==="err"?L.me_err:L.me_none;
-    root.innerHTML=h+'<p class="lead">'+L.me_lead+'</p><div class="note"><b>'+(pState==="none"?L.me_none_t:"⚠️")+'</b><br>'+msg+'</div>'+
+    root.innerHTML=h+'<p class="lead">'+L.me_lead+'</p><div class="note"><b>'+(pState==="none"?L.me_none_t:"⚠️")+'</b><br>'+msg+(pDetail?'<br><small style="color:var(--muted);word-break:break-word">'+esc(pDetail)+'</small>':"")+'</div>'+
       (pState==="err"?'<button class="btn" id="retry">'+L.me_refresh+'</button>':"");
     const r=$("#retry");if(r)r.onclick=()=>initProfile();
     return;
