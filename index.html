@@ -2547,7 +2547,7 @@ function applyLang(){
 })();
 window.addEventListener("hashchange",route);
 applyLang();route();
-if(!location.hash.startsWith("#me")&&storedToken())initProfile();
+if(!location.hash.startsWith("#me/")&&storedToken())initProfile();
 syncData();
 </script>
 </body>
