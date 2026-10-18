@@ -2952,9 +2952,9 @@ function itemsListHtml(items){
 
 /* ----- "Best formations with YOUR animals" (Ideas tab) ----- */
 const SG_T={
-  fr:{t:"🧠 Meilleures formations avec TES animaux",lead:"Je teste de vraies équipes avec tes animaux, tes niveaux de compétences, tes étoiles et tes armes équipées — le même moteur que le bot — puis je t'explique pourquoi elles sont bonnes.",go:"Calculer mes meilleures formations",again:"Recalculer",run:(d,n)=>"Calcul en cours… "+d+"/"+n,
+  fr:{t:"🧠 Meilleures formations avec TES animaux",lead:"Je teste de vraies équipes avec tes animaux, tes niveaux de compétences, tes étoiles et tes armes équipées — le même moteur que le bot — puis je t'explique pourquoi elles sont bonnes.",go:"Calculer mes meilleures formations",again:"Recalculer",run:(d,n)=>"Calcul en cours… "+d+" %",
     few:"Il te faut au moins 3 animaux pour former une équipe. Explore pour en débloquer !",noprof:"Connecte-toi (onglet « Moi ») pour que je teste TES animaux.",
-    info:(n,m)=>n+" animaux possédés · "+m+" équipes simulées · « Duels » = voir la légende sous chaque titre, « Tour » = étage atteint en moyenne sur plusieurs vraies montées (vie reportée, reliques)",
+    info:(n,m)=>n+" animaux possédés · "+m+" équipes testées · « Duels » = voir la légende sous chaque titre, « Tour » = étage atteint en moyenne sur plusieurs vraies montées (vie reportée, reliques)",
     upg:"🚀 La même équipe une fois montée (niv. 10, 5⭐) :",upgShort:"une fois montée :",nowT:"✅ Les meilleures équipes MAINTENANT",nowH:"Avec tes niveaux, tes étoiles et tes armes d'aujourd'hui. « Duels » = victoires contre les autres meilleures équipes possibles avec tes animaux actuels.",maxT:"🚀 Le POTENTIEL si tu améliores tes animaux",maxH:"Les mêmes animaux (ceux que tu possèdes), mais au niveau 10 de compétences et 5 étoiles : les formations à viser sur la durée. « Duels » = victoires contre les meilleures équipes DU JEU (tous les animaux, niveau 10, 5⭐).",need:"Pour y arriver :",needNone:"rien, tes animaux sont déjà au maximum ✅",lvAvg:v=>"compétences niveau "+v+" → 10",
     lab:{all:"🏆 La meilleure globalement",duel:"⚔️ La meilleure en duel",tower:"🗼 La meilleure pour la Tour",alt:"💡 Une bonne alternative"},
     why:{all:"Le meilleur mélange entre duels et Tour.",duel:"Elle gagne le plus de combats contre les autres bonnes équipes.",tower:"Elle monte le plus haut dans la Tour (vie reportée d'étage en étage, reliques).",alt:"Presque aussi forte, avec d'autres animaux."},
@@ -2964,9 +2964,9 @@ const SG_T={
     edge:(a,b)=>a+" bat "+b+" : +15% de dégâts infligés, −10% subis.",
     enemy:"Effets sur l'ennemi :",cur:"Ton équipe actuelle",curBest:"C'est déjà la meilleure que j'ai trouvée, bravo ✅",curRank:(r,n)=>"elle arrive "+r+"ᵉ sur "+n+" équipes testées.",
     tipLv:(n)=>"Astuce : fais monter "+n+" en priorité, c'est le moins entraîné de ta meilleure équipe.",
-    tr:{dodge:"esquive des coups",share:"encaisse les coups visant ses alliés",reflect:"renvoie des dégâts",thorns:"blesse ceux qui le frappent",fortify:"peut doubler sa garde",opening:"très solide aux tours 1-3",revive:"peut réanimer un allié",teamWide:"soigne toute l'équipe",rescue:"soigne plus un allié en danger",encourage:"booste le prochain attaquant",guard:"booste le prochain défenseur",chainHeal:"soigne un 2ᵉ allié",doubleChance:"peut frapper deux fois",critChance:"coups critiques",rage:"frappe plus fort quand il est blessé",lifesteal:"vole de la vie",dot:"poison / saignement",vuln:"rouille (l'ennemi prend plus de dégâts)",fear:"frayeur (l'ennemi frappe moins fort)",tank:"gros bloc de PV et de garde",heal:"soins réguliers",hit:"gros dégâts directs"},
+    tr:{dodge:"esquive des coups",share:"encaisse les coups visant ses alliés",reflect:"renvoie des dégâts",thorns:"blesse ceux qui le frappent",fortify:"peut doubler sa garde",opening:"très solide aux tours 1-3",revive:"peut réanimer un allié",teamWide:"soigne toute l'équipe",rescue:"soigne plus un allié en danger",encourage:"booste le prochain attaquant",guard:"booste le prochain défenseur",chainHeal:"soigne un 2ᵉ allié",doubleChance:"peut frapper deux fois",critChance:"coups critiques",rage:"frappe plus fort quand il est blessé",lifesteal:"vole de la vie",dot:"poison / saignement",vuln:"rouille (l'ennemi prend plus de dégâts)",fear:"frayeur (l'ennemi frappe moins fort)",tank:"gros bloc de PV et de garde",heal:"soins réguliers",hit:"gros dégâts directs",no_defense:"aucune compétence de défense : il combat avec ses autres compétences",no_soutien:"aucune compétence de soutien (pas de soins) : il combat avec ses autres compétences",no_attaque:"aucune compétence d'attaque : il combat avec ses autres compétences"},
     role:{defense:"Défenseur",soutien:"Soutien",attaque:"Attaquant"}},
-  en:{t:"🧠 Best formations with YOUR animals",lead:"I test real teams built from your animals, with your skill levels, stars and equipped weapons — the same engine as the bot — then explain why they're good.",go:"Calculate my best formations",again:"Recalculate",run:(d,n)=>"Calculating… "+d+"/"+n,
+  en:{t:"🧠 Best formations with YOUR animals",lead:"I test real teams built from your animals, with your skill levels, stars and equipped weapons — the same engine as the bot — then explain why they're good.",go:"Calculate my best formations",again:"Recalculate",run:(d,n)=>"Calculating… "+d+" %",
     few:"You need at least 3 animals to form a team. Go explore to unlock more!",noprof:"Log in (the “Me” tab) so I can test YOUR animals.",
     info:(n,m)=>n+" animals owned · "+m+" teams simulated · “Duels” = see the legend under each title, “Tower” = average floor reached over several real climbs (carried-over HP, relics)",
     upg:"🚀 The same team once upgraded (lvl 10, 5⭐):",upgShort:"once upgraded:",nowT:"✅ Best teams RIGHT NOW",nowH:"With your current levels, stars and weapons. “Duels” = wins against the other best teams possible with your current animals.",maxT:"🚀 POTENTIAL if you upgrade your animals",maxH:"The same animals you own, but at skill level 10 and 5 stars: the line-ups to aim for. “Duels” = wins against the best teams IN THE GAME (all animals, level 10, 5⭐).",need:"To get there:",needNone:"nothing, your animals are already maxed ✅",lvAvg:v=>"skills level "+v+" → 10",
@@ -2978,7 +2978,7 @@ const SG_T={
     edge:(a,b)=>a+" beats "+b+": +15% damage dealt, −10% taken.",
     enemy:"Effects on the enemy:",cur:"Your current team",curBest:"It's already the best I found, nice ✅",curRank:(r,n)=>"ranks #"+r+" of "+n+" teams tested.",
     tipLv:(n)=>"Tip: level up "+n+" first — it's the least trained member of your best team.",
-    tr:{dodge:"dodges hits",share:"soaks hits aimed at allies",reflect:"reflects damage",thorns:"hurts attackers",fortify:"can double its guard",opening:"extra tough on turns 1-3",revive:"can revive an ally",teamWide:"heals the whole team",rescue:"heals more when an ally is low",encourage:"buffs the next attacker",guard:"buffs the next defender",chainHeal:"heals a 2nd ally",doubleChance:"can strike twice",critChance:"critical hits",rage:"hits harder when hurt",lifesteal:"drains life",dot:"poison / bleed",vuln:"rust (enemy takes more damage)",fear:"fear (enemy hits weaker)",tank:"big HP and guard",heal:"steady healing",hit:"big direct damage"},
+    tr:{dodge:"dodges hits",share:"soaks hits aimed at allies",reflect:"reflects damage",thorns:"hurts attackers",fortify:"can double its guard",opening:"extra tough on turns 1-3",revive:"can revive an ally",teamWide:"heals the whole team",rescue:"heals more when an ally is low",encourage:"buffs the next attacker",guard:"buffs the next defender",chainHeal:"heals a 2nd ally",doubleChance:"can strike twice",critChance:"critical hits",rage:"hits harder when hurt",lifesteal:"drains life",dot:"poison / bleed",vuln:"rust (enemy takes more damage)",fear:"fear (enemy hits weaker)",tank:"big HP and guard",heal:"steady healing",hit:"big direct damage",no_defense:"no defense skill: it fights with its other skills",no_soutien:"no support skill (no healing): it fights with its other skills",no_attaque:"no attack skill: it fights with its other skills"},
     role:{defense:"Defender",soutien:"Support",attaque:"Attacker"}}
 };
 const sgT=()=>SG_T[lang]||SG_T.en;
@@ -3056,107 +3056,292 @@ function sgRefAt(ids,lv,st){
   for(const id of ids){const an=ArenaSim.ANIMALS[id];if(!an)return null;p.etoiles[id]=st;p.animaux[id]={competences:{}};for(const sk of ArenaSim.allSkillsForAnimal(an))p.animaux[id].competences[sk.id]=lv}
   return p;
 }
+/*SGENGINE-BEGIN*/
+/* ============================================================
+   MOTEUR « meilleures formations » v5 — utilisé par le site ET par le banc d'essai.
+   Entonnoir : on teste TOUTES les équipes possibles (ou les plus prometteuses si tu as
+   beaucoup d'animaux) avec quelques combats, puis on regarde de plus en plus précisément
+   les meilleures. Mêmes tirages « semés » pour toutes les équipes (comparaison équitable,
+   résultat identique à chaque calcul), marge d'erreur calculée sur chaque chiffre.
+   ============================================================ */
+const SGE=(function(){
+const ROLES=[["defense","defenseur"],["soutien","soutien"],["attaque","attaquant"]];
+const TOWER_SE=13;            // une montée de Tour ≈ 13 combats de duel (en temps de calcul)
+function hash(s){let h=2166136261>>>0;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)}return h>>>0}
+function rng(seed){let a=seed>>>0;return function(){a=(a+0x6D2B79F5)>>>0;let t=a;t=Math.imul(t^(t>>>15),t|1);t^=t+Math.imul(t^(t>>>7),t|61);return((t^(t>>>14))>>>0)/4294967296}}
+function seeded(key,fn){const o=Math.random;Math.random=rng(hash(key));try{return fn()}finally{Math.random=o}}
+const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
+
+function create(env){
+  const Sim=env.Sim,DATA=env.DATA,byId=env.byId,P=env.P;
+  const MAXST=DATA.stars||5;
+
+  /* joueur simulé pour une équipe [défenseur, soutien, attaquant] */
+  function makePlayer(ids,mode,over){
+    const p={formation:{defenseur:ids[0],soutien:ids[1],attaquant:ids[2]},animaux:{},etoiles:{},items:[],equipped:{},victoires:0};
+    ids.forEach((id,i)=>{
+      const an=Sim.ANIMALS[id],cat=ROLES[i][0];
+      const lvAll=over&&over.lv!=null?over.lv:null,stAll=over&&over.st!=null?over.st:null;
+      p.etoiles[id]=stAll!=null?stAll:(mode==="max"?MAXST:Math.max(0,(P.stars&&P.stars[id])||0));
+      const lv={};
+      for(const sk of Sim.allSkillsForAnimal(an))lv[sk.id]=lvAll!=null?lvAll:(mode==="max"?10:((P.levels&&P.levels[id]&&P.levels[id][sk.id])||1));
+      p.animaux[id]={competences:lv};
+      if(mode!=="max"&&!over){
+        const iid=P.equipped&&P.equipped[id];const it=iid&&(P.items||[]).find(x=>x.instanceId===iid);
+        if(it&&(it.tier==="legendary"?it.animalId===id:it.category===cat)){p.items.push(Object.assign({},it));p.equipped[id]=it.instanceId}
+      }
+    });
+    return p;
+  }
+
+  /* --- combats --- */
+  function relicPick(ch,fighters){
+    if(fighters.some(f=>!f.alive)&&ch.includes("phoenix"))return"phoenix";
+    const tm=fighters.reduce((x,f)=>x+f.maxHp,0),th=fighters.reduce((x,f)=>x+f.hp,0);
+    if(tm>0&&th/tm<.5&&ch.includes("rest"))return"rest";
+    const pr=["aegis","edge","drum","bloom","clover","meal","rest","phoenix","purse","map"];
+    return pr.find(id=>ch.includes(id))||ch[0];
+  }
+  function towerOnce(p){
+    let fighters=Sim.makeFighters(p,null);const relics=[];let floor=1,cleared=0;
+    while(floor<=120){
+      const boss=Sim.floorBoss(floor);
+      const r=Sim.simulateCombat(p,{boss,fighters,transformLoadout:l=>Sim.applyRelicsToLoadout(l,relics)});
+      fighters=r.fighters;
+      if(!r.victory)break;
+      cleared=floor;floor++;
+      const rid=relicPick(Sim.rollRelicChoices(relics),fighters);
+      if(Sim.RELICS[rid].kind==="instant")Sim.applyInstantRelic(rid,fighters);else relics.push(rid);
+    }
+    return cleared;
+  }
+  function duelWins(a,b,N){           // victoires de a contre b, côtés alternés (égalité = ½)
+    let w=0;
+    for(let k=0;k<N;k++){
+      const flip=k%2===1;const r=flip?Sim.simulatePvP(b.p,a.p):Sim.simulatePvP(a.p,b.p);
+      if(r.winner!=="A"&&r.winner!=="B")w+=.5;else if((r.winner==="A")!==flip)w++;
+    }
+    return w;
+  }
+
+  /* --- équipes de référence (champ d'adversaires FIXE pour comparer toutes les équipes) --- */
+  function buildRefs(mode){
+    let lv=10,st=MAXST;
+    if(mode==="now"){
+      const mains=env.own.map(id=>{const l=(P.levels&&P.levels[id])||{};const v=Object.values(l);return{id,lv:v.length?v.reduce((a,b)=>a+b,0)/v.length:1,st:(P.stars&&P.stars[id])||0}}).sort((a,b)=>b.lv+b.st*2-(a.lv+a.st*2)||(a.id<b.id?-1:1)).slice(0,6);
+      lv=clamp(Math.round(mains.reduce((a,b)=>a+b.lv,0)/mains.length),1,10);
+      st=clamp(Math.round(mains.reduce((a,b)=>a+b.st,0)/mains.length),0,MAXST);
+    }
+    const lists=[];
+    for(const ty of ["terre","air","eau"])(DATA.ideas[ty]||[]).slice(0,4).forEach(r=>lists.push([r.d,r.s,r.a]));
+    (env.seeds||[]).slice(0,14).forEach(x=>lists.push(x));
+    const out=[],seen=new Set();
+    for(const x of lists){
+      const k=x.join("|");if(seen.has(k))continue;seen.add(k);
+      if(!x.every(id=>Sim.ANIMALS[id]))continue;
+      out.push({k,ids:x,p:makePlayer(x,mode,{lv,st})});
+    }
+    // diversifie l'ordre : types mélangés d'abord (les premières références servent au tri rapide)
+    const bucket={terre:[],air:[],eau:[],mix:[]};
+    for(const r of out){const t=byId[r.ids[0]].type;bucket[r.ids.every(i=>byId[i].type===t)?t:"mix"].push(r)}
+    const o=[];for(let i=0;i<20;i++)for(const b of["terre","air","eau","mix"])if(bucket[b][i])o.push(bucket[b][i]);
+    return o;
+  }
+
+  /* --- candidats --- */
+  function preScore(ids){
+    const S=DATA.sc;let v=S[ids[0]].defense+S[ids[1]].soutien+S[ids[2]].attaque;
+    const ty=byId[ids[0]].type;if(ty&&ids.every(i=>byId[i].type===ty))v*=(DATA.trio[ty]||1);return v;
+  }
+  function candidates(maxTeams){
+    const own=env.own,ownSet=new Set(own);const all=[];
+    for(const d of own)for(const s of own){if(s===d)continue;for(const a of own){if(a===d||a===s)continue;all.push({ids:[d,s,a],pre:preScore([d,s,a])})}}
+    const total=all.length;
+    all.sort((x,y)=>y.pre-x.pre||(x.ids.join()<y.ids.join()?-1:1));
+    const chosen=new Map();const add=c=>{const k=c.ids.join("|");if(!chosen.has(k))chosen.set(k,{ids:c.ids.slice(),k,pre:c.pre||0})};
+    all.slice(0,maxTeams).forEach(add);
+    for(const ty of ["terre","air","eau"])all.filter(c=>c.ids.every(i=>byId[i].type===ty)).slice(0,24).forEach(add);
+    const S0=DATA.sc,roleOf=["defense","soutien","attaque"];
+    for(const sd of env.seeds||[]){
+      const miss=sd.map((x,k)=>ownSet.has(x)?-1:k).filter(k=>k>=0);
+      if(!miss.length)add({ids:sd,pre:0});
+      else if(miss.length===1){const k=miss[0];own.filter(x=>!sd.includes(x)).sort((x,y)=>S0[y][roleOf[k]]-S0[x][roleOf[k]]||(x<y?-1:1)).slice(0,4).forEach(x=>{const ids=sd.slice();ids[k]=x;add({ids,pre:0})})}
+    }
+    const cur=env.cur;let curKey=null;
+    if(cur&&cur.every(i=>i&&Sim.ANIMALS[i])&&new Set(cur).size===3&&cur.every(i=>ownSet.has(i))){curKey=cur.join("|");add({ids:cur,pre:0})}
+    return{teams:[...chosen.values()],total,curKey};
+  }
+
+  const cmpScore=(a,b)=>b.score-a.score||(a.k<b.k?-1:1);
+  /* note d'une équipe dans une étape : moitié duels, moitié Tour (Tour ramenée à la meilleure équipe de l'étape) */
+  function rate(list,duelKey,towerKey){
+    let tmax=1;for(const c of list)tmax=Math.max(tmax,c[towerKey]);
+    for(const c of list)c.score=.5*c[duelKey]+.5*(c[towerKey]/tmax);
+    return tmax;
+  }
+  const top=(list,n)=>list.slice().sort(cmpScore).slice(0,n);
+
+  /* ===== le calcul, en générateur : chaque yield = un petit morceau (le site rend la main entre deux) ===== */
+  function* run(mode,B){
+    B=B||60000;
+    const refs=buildRefs(mode);
+    const R=refs.length||1;
+    const maxTeams=env.maxTeams||2400;
+    const {teams,total,curKey}=candidates(maxTeams);
+    const M=teams.length;
+    let sims=0,done=0;
+    const plan={s0:clamp(Math.floor(.16*B/M),4,10)};
+    const c1=Math.min(R,8)*6+3*TOWER_SE;
+    plan.K1=clamp(Math.floor(.18*B/c1),30,700);
+    const c2=Math.min(R,8)*20+12*TOWER_SE;
+    plan.K2=clamp(Math.floor(.15*B/c2),12,140);
+    plan.K3=Math.min(plan.K2,20);plan.K4=Math.min(plan.K3,8);
+    const totalWork=M*plan.s0+Math.min(M,plan.K1)*c1+Math.min(M,plan.K2)*c2+plan.K3*(plan.K3-1)/2*40+plan.K3*(Math.min(R,8)*40+40*TOWER_SE)+plan.K4*(plan.K4-1)/2*200+plan.K4*(Math.min(R,8)*100+160*TOWER_SE);
+    const tick=function*(w){done+=w;sims+=w;yield{done,total:totalWork}};
+    const fieldDuel=(c,N,tag,nref)=>{            // victoires moyennes contre le champ fixe
+      let w=0,g=0;const use=refs.slice(0,nref||refs.length);
+      for(const r of use){w+=seeded("D|"+tag+"|"+r.k,()=>duelWins(c,r,N));g+=N}
+      return[w,g];
+    };
+    const towerAvg=(c,n,tag)=>{let s=0,q=0;for(let j=0;j<n;j++){const v=seeded("T|"+tag+"|"+j,()=>towerOnce(c.p));s+=v;q+=v*v}return[s,q,n]};
+
+    // --- étape 0 : tri rapide de TOUTES les équipes candidates (quelques combats chacune, mêmes adversaires pour toutes)
+    for(const c of teams){
+      c.p=makePlayer(c.ids,mode);
+      let w=0;
+      for(let j=0;j<plan.s0;j++)w+=seeded("S0|"+j,()=>duelWins(c,refs[j%R],1));
+      c.f0=w/plan.s0;
+      yield*tick(plan.s0);
+    }
+    let s0=teams.slice().sort((a,b)=>b.f0-a.f0||(a.k<b.k?-1:1));
+    const keep0=new Map();s0.slice(0,plan.K1).forEach(c=>keep0.set(c.k,c));
+    // on ne perd jamais l'équipe actuelle, et on garde les « équipes fortes connues »
+    for(const c of teams)if(c.k===curKey||c.pre===0)keep0.set(c.k,c);
+    let pool=[...keep0.values()];
+
+    // --- étape 1 : plus de combats contre le champ + 3 montées de Tour
+    for(const c of pool){
+      const[w,g]=fieldDuel(c,6,"S1",8);c.fw=w;c.fg=g;c.field=w/g;
+      const[ts,tq,tn]=towerAvg(c,3,"S1");c.tower=ts/tn;
+      yield*tick(g+tn*TOWER_SE);
+    }
+    rate(pool,"field","tower");
+    let k1=top(pool,plan.K2);
+    if(curKey&&!k1.some(c=>c.k===curKey))k1.push(pool.find(c=>c.k===curKey));
+
+    // --- étape 2 : encore plus précis
+    for(const c of k1){
+      const[w,g]=fieldDuel(c,16,"S2",14);c.fw=w;c.fg=g;c.field=w/g;
+      const[ts,tq,tn]=towerAvg(c,12,"S2");c.tower=ts/tn;
+      yield*tick(g+tn*TOWER_SE);
+    }
+    rate(k1,"field","tower");
+    if(env.onPartial){const part=finish(top(k1,plan.K3),curKey,M,total,sims,true,mode);yield{partial:part}}
+    let k2=top(k1,plan.K3);
+    if(curKey&&!k2.some(c=>c.k===curKey))k2.push(k1.find(c=>c.k===curKey));
+
+    // --- étape 3 : tournoi entre les meilleures + montées de Tour
+    for(const c of k2){c.rw=0;c.rg=0}
+    if(mode==="now"){
+      for(let i=0;i<k2.length;i++)for(let j=i+1;j<k2.length;j++){
+        const a=k2[i],b=k2[j];const w=seeded("R3|"+a.k+">"+b.k,()=>duelWins(a,b,40));
+        a.rw+=w;b.rw+=40-w;a.rg+=40;b.rg+=40;yield*tick(40);
+      }
+    }
+    for(const c of k2){
+      const[w,g]=fieldDuel(c,24,"S3");c.fw=w;c.fg=g;c.field=w/g;
+      const[ts,tq,tn]=towerAvg(c,40,"S3");c.tower=ts/tn;
+      c.duel=mode==="now"?(c.rg?c.rw/c.rg:c.field):c.field;
+      yield*tick(g+tn*TOWER_SE);
+    }
+    rate(k2,"duel","tower");
+    let k3=top(k2,plan.K4);
+    if(curKey&&!k3.some(c=>c.k===curKey))k3.push(k2.find(c=>c.k===curKey));
+
+    // --- étape 4 : les finalistes, avec beaucoup de combats (c'est ce qui sera affiché)
+    for(const c of k3){c.rw=0;c.rg=0;c.tw=0;c.tq=0;c.tn=0}
+    if(mode==="now"){
+      for(let i=0;i<k3.length;i++)for(let j=i+1;j<k3.length;j++){
+        const a=k3[i],b=k3[j];const w=seeded("R4|"+a.k+">"+b.k,()=>duelWins(a,b,200));
+        a.rw+=w;b.rw+=200-w;a.rg+=200;b.rg+=200;yield*tick(200);
+      }
+    }
+    for(const c of k3){
+      const[w,g]=fieldDuel(c,40,"S4");c.fw=w;c.fg=g;c.field=w/g;
+      const[ts,tq,tn]=towerAvg(c,160,"S4");c.tw=ts;c.tq=tq;c.tn=tn;c.tower=ts/tn;
+      if(mode==="now"){c.duel=c.rg?c.rw/c.rg:c.field;c.dn=c.rg||1}else{c.duel=c.field;c.dn=g}
+      yield*tick(g+tn*TOWER_SE);
+    }
+    rate(k3,"duel","tower");
+    return finish(k3,curKey,M,total,sims,false,mode);
+  }
+
+  function finish(fin,curKey,tested,totalTeams,sims,provisional,mode){
+    fin=fin.map(c=>{
+      const dn=c.dn||c.fg||1;const duelSE=Math.sqrt(Math.max(.0001,c.duel*(1-c.duel))/dn);
+      let tSE=0;if(c.tn>1){const m=c.tw/c.tn;tSE=Math.sqrt(Math.max(0,(c.tq/c.tn-m*m)))/Math.sqrt(c.tn)}
+      return{ids:c.ids.slice(),k:c.k,duel:c.duel,duelSE,pve:c.tower,pveSE:tSE,score:c.score};
+    });
+    const cmp=key=>(a,b)=>b[key]-a[key]||(a.k<b.k?-1:1);
+    const byS=fin.slice().sort(cmp("score")),byD=fin.slice().sort(cmp("duel")),byT=fin.slice().sort(cmp("pve"));
+    const picks=[];
+    const take=(c,key)=>{if(!c)return;const ex=picks.find(p=>p.c.k===c.k);if(ex){ex.keys.push(key);return}picks.push({c,keys:[key]})};
+    take(byS[0],"all");take(byD[0],"duel");take(byT[0],"tower");
+    for(const c of byS){if(picks.length>=3)break;if(!picks.some(p=>p.c===c))take(c,"alt")}
+    const cur=curKey?fin.find(c=>c.k===curKey):null;
+    // égalité statistique entre la 1re et la 2e (même marge d'erreur) : on le dit honnêtement
+    let tie=null;
+    if(byS.length>1){
+      const a=byS[0],b=byS[1];
+      const se=Math.sqrt(.25*(a.duelSE**2+b.duelSE**2)+.25*((a.pveSE**2+b.pveSE**2)/Math.max(1,a.pve)**2));
+      if(a.score-b.score<1.5*se)tie={a:a.k,b:b.k};
+    }
+    return{picks,cur,rank:cur?byS.indexOf(cur)+1:0,n:fin.length,tested,totalTeams,sims:Math.round(sims),provisional,tie};
+  }
+
+  return{run,makePlayer,candidates,buildRefs,duelWins,towerOnce,seeded,hash};
+}
+return{create,ROLES,seeded,hash,rng};
+})();
+
+
+/*SGENGINE-END*/
+let SG_B=0;
 function sgStart(){
   if(!P||!simReady())return;
   const own=[...ownedSet()].filter(id=>byId[id]&&ArenaSim.ANIMALS[id]).sort();
   const sig=sgSig();
   if(own.length<3){SG={state:"done",sig,res:{few:true,owned:own.length},prog:0,total:0};renderIdeas();return}
-  // 1. présélection (score rapide)  2. simulation de tous les finalistes  3. affinage des meilleurs avec beaucoup plus de combats
-  let pool=own;
-  if(own.length>18){
-    const S=DATA.sc,set=new Set();
-    for(const k of ["defense","soutien","attaque"])own.slice().sort((x,y)=>S[y][k]-S[x][k]||(x<y?-1:1)).slice(0,8).forEach(i=>set.add(i));
-    for(const ty of ["terre","air","eau"]){
-      const same=own.filter(i=>byId[i].type===ty);
-      if(same.length>=3)same.sort((x,y)=>Math.max(S[y].defense,S[y].soutien,S[y].attaque)-Math.max(S[x].defense,S[x].soutien,S[x].attaque)||(x<y?-1:1)).slice(0,6).forEach(i=>set.add(i));
-    }
-    pool=[...set].sort();
-  }
-  const all=[];
-  for(const d of pool)for(const s of pool){if(s===d)continue;for(const a of pool){if(a===d||a===s)continue;all.push({ids:[d,s,a],pre:sgPre([d,s,a])})}}
-  all.sort((x,y)=>y.pre-x.pre||(x.ids.join()<y.ids.join()?-1:1));
-  const chosen=new Map();const add=c=>chosen.set(c.ids.join("|"),c);
-  all.slice(0,72).forEach(add);
-  for(const ty of ["terre","air","eau"])all.filter(c=>c.ids.every(i=>byId[i].type===ty)).slice(0,8).forEach(add);
-  // équipes fortes connues, composées d'animaux possédés ; si un seul membre manque, on le remplace par un de tes animaux
-  const ownSet=new Set(own);const S0=DATA.sc;const roleOf=["defense","soutien","attaque"];
-  for(const sd of SG_SEEDS){
-    const miss=sd.map((x,k)=>ownSet.has(x)?-1:k).filter(k=>k>=0);
-    if(!miss.length)add({ids:sd.slice(),pre:0});
-    else if(miss.length===1){
-      const k=miss[0];
-      own.filter(x=>!sd.includes(x)).sort((x,y)=>S0[y][roleOf[k]]-S0[x][roleOf[k]]||(x<y?-1:1)).slice(0,4).forEach(x=>{const ids=sd.slice();ids[k]=x;add({ids,pre:0})});
-    }
-  }
-  const f=P.formation||{};const cur=[f.defenseur,f.soutien,f.attaquant];
-  let curKey=null;
-  if(cur.every(i=>i&&ArenaSim.ANIMALS[i])&&new Set(cur).size===3){curKey=cur.join("|");if(!chosen.has(curKey))add({ids:cur,pre:0})}
-  const cands=[...chosen.values()];
-  // Panel de référence FIXE (équipes fortes niveau 10 / 5 étoiles) : les % de duel sont donc comparables entre « maintenant » et « potentiel ».
-  const panel=[];
-  // niveau "de référence" du joueur = moyenne de ses 6 animaux les plus entraînés
-  const mains=own.map(id=>{const lv=(P.levels&&P.levels[id])||{};const v=Object.values(lv);return{id,lv:v.length?v.reduce((a,b)=>a+b,0)/v.length:1,st:(P.stars&&P.stars[id])||0}}).sort((a,b)=>b.lv+b.st*2-(a.lv+a.st*2)||(a.id<b.id?-1:1)).slice(0,6);
-  const pLv=Math.max(1,Math.min(10,Math.round(mains.reduce((a,b)=>a+b.lv,0)/mains.length)));
-  const pSt=Math.max(0,Math.min(DATA.stars||5,Math.round(mains.reduce((a,b)=>a+b.st,0)/mains.length)));
-  {
-    const refs=[];
-    for(const ty of ["terre","air","eau"])(DATA.ideas[ty]||[]).slice(0,4).forEach(r=>refs.push([r.d,r.s,r.a]));
-    SG_SEEDS.slice(0,14).forEach(x=>refs.push(x));
-    const seen=new Set();
-    for(const x of refs){const k=x.join("|");if(seen.has(k))continue;seen.add(k);const pl=sgRefAt(x,10,DATA.stars||5);if(pl)panel.push({k,p:pl})}
-  }
-  const N=cands.length,TOP=14;
-  const total=(N+N*(N-1)/2+TOP+TOP*(TOP-1)/2)+(N+N*(N-1)/2+TOP+TOP+1);
-  SG={state:"run",sig,res:null,prog:0,total};
-  const results={};
-  const runMode=(mode,done)=>{
-  SG_MODE=mode;
-  const cKey=mode==='now'?curKey:null;
-  let phase=0,i=0,j=1,finalists=null;
+  const f=P.formation||{};
+  const eng=SGE.create({Sim:ArenaSim,DATA,byId,P,own,seeds:SG_SEEDS,cur:[f.defenseur,f.soutien,f.attaquant]});
+  // on mesure la vitesse de cet appareil pour régler le nombre de combats (≈ 8 s par partie)
+  // (réglé une seule fois par appareil : sinon deux calculs successifs pourraient donner des résultats un peu différents)
+  let B=0;
+  try{B=+localStorage.getItem("sgB")||0}catch(e){}
+  if(!SG_B&&!B){try{const q=eng.makePlayer(own.slice(0,3),"now"),t0=performance.now();eng.duelWins({p:q},{p:q},80);const ms=Math.max(.02,(performance.now()-t0)/80);const raw=8000/ms;B=raw>=60000?60000:raw>=45000?45000:30000;try{localStorage.setItem("sgB",String(B))}catch(e){}}catch(e){B=45000}}
+  if(SG_B)B=SG_B;else{if(!B)B=45000;SG_B=B}
+  SG={state:"run",sig,res:null,prog:0,total:100};
+  const alreadyMax=own.every(id=>((P.stars&&P.stars[id])||0)>=(DATA.stars||5)&&ArenaSim.allSkillsForAnimal(ArenaSim.ANIMALS[id]).every(sk=>((P.levels&&P.levels[id]&&P.levels[id][sk.id])||1)>=10));
+  const modes=alreadyMax?["now"]:["now","max"];
+  const results={};let mi=0,gen=eng.run(modes[0],B);
+  const finish=()=>{if(alreadyMax)results.max=results.now;SG={state:"done",sig,res:Object.assign({},results,{tested:results.now.tested,owned:own.length}),prog:0,total:0};if(view==="ideas")renderIdeas()};
   const step=()=>{
     if(SG.sig!==sig||SG.state!=="run")return;
     const t0=performance.now();
     while(performance.now()-t0<40){
-      if(phase===0){            // tour, premier passage
-        if(i>=N){phase=1;i=0;j=1;continue}
-        const c=cands[i];c.k=c.ids.join("|");c.p=sgPlayer(c.ids);c.pve=sgTower(c.p,c.k,4);c.w=0;c.g=0;i++;SG.prog++;
-      }else if(phase===1){     // duels, premier passage
-        if(i>=N-1){
-          for(const c of cands){c.duel=c.g?c.w/c.g:0;c.score=.5*c.duel+.5*Math.min(1,c.pve/45)}
-          finalists=cands.slice().sort((x,y)=>y.score-x.score||(x.k<y.k?-1:1)).slice(0,TOP);
-          const ck=cKey&&cands.find(c=>c.k===cKey);if(ck&&!finalists.includes(ck))finalists.push(ck);
-          phase=2;i=0;j=1;continue;
-        }
-        const a=cands[i],b=cands[j];
-        const r=sgDuel(a,b,a.k+">"+b.k,4);
-        a.w+=r*4;b.w+=(1-r)*4;a.g+=4;b.g+=4;
-        SG.prog++;j++;if(j>=N){i++;j=i+1}
-      }else if(phase===2){     // affinage : tour avec beaucoup plus de tirages
-        if(i>=finalists.length){phase=3;i=0;j=1;continue}
-        const c=finalists[i];c.pve2=sgTower(c.p,c.k,16);i++;SG.prog++;
-      }else if(mode==='now'){  // affinage : duels des finalistes entre eux (= les meilleures équipes possibles avec TES animaux)
-        if(i===0&&j===1&&!finalists[0].w2&&!finalists[0].g2)finalists.forEach(c=>{c.w2=0;c.g2=0});
-        if(i>=finalists.length-1){done(sgFinish(finalists,cKey,N));return}
-        const a=finalists[i],b=finalists[j];
-        const r=sgDuel(a,b,a.k+">"+b.k+"#2",40);
-        a.w2+=r*40;b.w2+=(1-r)*40;a.g2+=40;b.g2+=40;
-        SG.prog++;j++;if(j>=finalists.length){i++;j=i+1}
-      }else{                   // affinage : duels contre les meilleures équipes DU JEU (tous animaux, niveau 10, 5 étoiles)
-        if(i>=finalists.length){done(sgFinish(finalists,cKey,N));return}
-        const a=finalists[i];let w=0;
-        for(const r of panel)w+=sgDuel(a,r,a.k+">P"+r.k,16);
-        a.w2=w;a.g2=panel.length||1;i++;SG.prog++;
+      const r=gen.next();
+      if(r.done){
+        results[modes[mi]]=r.value;mi++;
+        if(mi>=modes.length){finish();return}
+        gen=eng.run(modes[mi],B);continue;
       }
+      const v=r.value;if(v&&v.total){SG.prog=Math.round(100*((mi+Math.min(1,v.done/v.total))/modes.length))}
     }
     sgProgress();
     setTimeout(step,0);
   };
-  setTimeout(step,20);
-  };
   renderIdeas();
-  const alreadyMax=own.every(id=>((P.stars&&P.stars[id])||0)>=(DATA.stars||5)&&ArenaSim.allSkillsForAnimal(ArenaSim.ANIMALS[id]).every(sk=>((P.levels&&P.levels[id]&&P.levels[id][sk.id])||1)>=10));
-  if(alreadyMax)SG.total=Math.round(SG.total/2);
-  runMode('now',r1=>{results.now=r1;if(alreadyMax){results.max=r1;SG_MODE='now';SG={state:'done',sig,res:Object.assign({},results,{tested:N,owned:own.length}),prog:0,total:0};if(view==='ideas')renderIdeas();return}runMode('max',r2=>{results.max=r2;SG_MODE='now';SG={state:'done',sig,res:Object.assign({},results,{tested:N,owned:own.length}),prog:0,total:0};if(view==='ideas')renderIdeas()})});
+  setTimeout(step,20);
 }
 function sgFinish(fin,curKey,n){
   fin=fin.map(c=>({ids:c.ids.slice(),k:c.k,duel:c.g2?c.w2/c.g2:0,pve:c.pve2,score:0}));
@@ -3184,6 +3369,7 @@ function sgExplain(c,mode){
       const fx=s.fx||{};
       for(const k of ["dodge","share","reflect","thorns","fortify","opening","revive","teamWide","rescue","encourage","guard","chainHeal","doubleChance","critChance","rage","lifesteal"])if(fx[k]&&T.tr[k]&&!tags.includes(T.tr[k]))tags.push(T.tr[k]);
     }
+    if(!tags.length&&!sgSkillOf(a,cat).length)tags.push(T.tr["no_"+cat]);
     if(!tags.length)tags.push(T.tr[cat==="defense"?"tank":cat==="soutien"?"heal":"hit"]);
     const st=mode==='max'?(DATA.stars||5):((P.stars&&P.stars[a.id])||0);
     out.push(CAT_EMO[cat]+" <b>"+T.role[cat]+"</b> — "+esc(a.name)+(st?" "+"⭐".repeat(st):"")+" : "+tags.slice(0,3).join(", "));
@@ -3212,7 +3398,7 @@ function sgCards(R,mode){
   R.picks.forEach((p,idx)=>{
     const c=p.c;const A=c.ids.map(i=>byId[i]);const ty=A[0].type;const same=ty&&A.every(a=>a.type===ty);
     h+='<div class="sgc"><h4>'+p.keys.map(k=>T.lab[k]).join(" + ")+'</h4><p class="hint" style="margin:-2px 0 8px">'+p.keys.map(k=>T.why[k]).join(" ")+'</p>'+
-      trioCardHtml({d:A[0],s:A[1],a:A[2]},same?ty:"line",'<span class="pill">'+T.duels+' '+Math.round(c.duel*100)+'%</span><span class="pill">'+T.tower+' '+Math.round(c.pve)+'</span><button class="pill" data-b="'+c.ids.join(",")+'">'+T.test+'</button>',idx===0)+
+      trioCardHtml({d:A[0],s:A[1],a:A[2]},same?ty:"line",'<span class="pill">'+T.duels+' '+Math.round(c.duel*100)+'% <small>±'+Math.max(1,Math.round(196*(c.duelSE||0)))+'</small></span><span class="pill">'+T.tower+' '+Math.round(c.pve)+' <small>±'+Math.max(1,Math.round(1.96*(c.pveSE||0)))+'</small></span><button class="pill" data-b="'+c.ids.join(",")+'">'+T.test+'</button>',idx===0)+
       '<ul class="sgw">'+sgExplain(c,mode).map(x=>'<li>'+x+'</li>').join("")+'</ul>';
     if(mode==="max"){
       const nd=sgNeeds(c);
@@ -3220,9 +3406,10 @@ function sgCards(R,mode){
     }
     h+='</div>';
   });
+  if(R.tie)h+='<p class="hint">'+(lang==="fr"?"⚖️ Les deux premières équipes sont à égalité : l'écart entre elles est plus petit que la marge d'erreur (±). Choisis celle que tu préfères jouer.":"⚖️ The top two teams are tied: the gap is smaller than the margin of error (±). Pick whichever you prefer to play.")+'</p>';
   return h;
 }
-const SG_VER="v4 · 16/10 00:58 · maintenant + potentiel";
+const SG_VER="v5 · 18/10 · entonnoir + marges d'erreur";
 function sgHtml(){
   const T=sgT();
   let h='<div class="sg"><h3 class="sec" style="margin-top:6px">'+T.t+'</h3><p class="hint" style="margin-top:-2px">'+T.lead+'</p><p class="hint" style="font-size:11px;opacity:.7;margin-top:-4px">'+SG_VER+'</p>';
@@ -3236,7 +3423,7 @@ function sgHtml(){
   // 1) maintenant
   h+='<h3 class="sec" style="margin-top:14px">'+T.nowT+'</h3><p class="hint" style="margin:-2px 0 6px">'+T.nowH+'</p>'+sgCards(R.now,"now");
   if(R.now.cur){
-    h+='<p class="tip"><b>'+T.cur+'</b> : '+T.duels+' '+Math.round(R.now.cur.duel*100)+'%, '+T.tower+' '+Math.round(R.now.cur.pve)+' — '+(R.now.rank===1?T.curBest:T.curRank(R.now.rank,R.now.n))+'</p>';
+    h+='<p class="tip"><b>'+T.cur+'</b> : '+T.duels+' '+Math.round(R.now.cur.duel*100)+'% (±'+Math.max(1,Math.round(196*(R.now.cur.duelSE||0)))+'), '+T.tower+' '+Math.round(R.now.cur.pve)+' — '+(R.now.rank===1?T.curBest:T.curRank(R.now.rank,R.now.n))+'</p>';
   }
   const best=R.now.picks[0].c;
   const lvs=id=>Object.values((P.levels&&P.levels[id])||{}).reduce((x,y)=>x+y,0);
