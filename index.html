@@ -335,7 +335,7 @@ footer{color:var(--muted);font-size:13px;padding:6px 0 10px;text-align:center}
 .sgc h4{margin:10px 0 4px;font-size:16px}
 .sgw{margin:8px 0 0;padding-left:18px;color:var(--muted);font-size:13.5px;line-height:1.5}
 .sgw li{margin:2px 0}.sgw b{color:var(--text)}
-</style>
+.sgsub{display:block;font-size:12px;opacity:.92;margin-top:3px;line-height:1.45}.sgw li{margin-bottom:8px}</style>
 </head>
 <body>
 <header>
@@ -3299,9 +3299,227 @@ function create(env){
     return{picks,cur,rank:cur?byS.indexOf(cur)+1:0,n:fin.length,tested,totalTeams,sims:Math.round(sims),provisional,tie};
   }
 
-  return{run,makePlayer,candidates,buildRefs,duelWins,towerOnce,seeded,hash};
+
+  /* ===== PROFIL MESURÉ : on fait combattre l'équipe (vrais combats du moteur) et on relève ce que fait RÉELLEMENT chaque animal ===== */
+  const RK=["defenseur","soutien","attaquant"];
+  function* profile(c,mode,N){
+    N=N||400;
+    const refs=buildRefs(mode),R=refs.length||1;
+    const pl=makePlayer(c.ids,mode);
+    const names=c.ids.map(id=>Sim.ANIMALS[id].name);
+    const S={n:0,win:0,turns:0,maxHp:0,hpEnd:0,withKo:0,role:[0,1,2].map(()=>({dmg:0,heal:0,shield:0,first:0,fall:0,rev:0,fightsFall:0})),byType:{},loadout:null,ref:R};
+    for(let k=0;k<N;k++){
+      const ref=refs[k%R];const flip=(Math.floor(k/R)%2)===1;
+      const r=seeded("P|"+c.k+"|"+mode+"|"+k,()=>flip?Sim.simulatePvP(ref.p,pl):Sim.simulatePvP(pl,ref.p));
+      const me=flip?"B":"A";
+      const won=r.winner==="draw"?.5:(r.winner===me?1:0);
+      S.n++;S.win+=won;S.turns+=r.turns.length;S.maxHp+=r["max"+me];S.hpEnd+=r["hpFinal".replace("Final","")+me+"Final"]/(r["max"+me]||1);
+      const ty=ref.ids.every(i=>byId[i].type===byId[ref.ids[0]].type)?byId[ref.ids[0]].type:"mix";
+      const bt=S.byType[ty]||(S.byType[ty]={w:0,g:0});bt.w+=won;bt.g++;
+      if(!S.loadout)S.loadout=r["loadout"+me].map(e=>({role:e.role,name:e.skill.name,cat:e.skill.category,rate:Math.round(e.rate),power:e.power,fx:e.skill.effect||null,boosted:!!e.boosted,legendary:!!e.legendary,item:!!e.item}));
+      let prev=[true,true,true],firstDone=false;const fellThis=[false,false,false];
+      for(const t of r.turns){
+        for(const e of t["events"+me]){
+          const i=names.indexOf(e.animal);if(i<0)continue;const q=S.role[i];
+          if(e.category==="attaque")q.dmg+=e.amount;else if(e.category==="defense")q.shield+=e.amount;else q.heal+=e.amount;
+          if(e.revived)q.rev++;
+        }
+        const snap=t["fighters"+me];
+        const newly=[];
+        snap.forEach(f=>{const i=RK.indexOf(f.role);if(i>=0&&prev[i]&&!f.alive){newly.push(i);prev[i]=false;S.role[i].fall++;fellThis[i]=true}});
+        if(newly.length&&!firstDone){firstDone=true;S.withKo++;newly.forEach(i=>S.role[i].first+=1/newly.length)}
+      }
+    }
+    // soins de style « vol de vie » ne sont pas dans les événements : on se contente de ce que le moteur enregistre par compétence
+    const tot=S.role.reduce((a,q)=>a+q.dmg,0)||1;
+    const out={n:S.n,win:S.win/S.n,turns:S.turns/S.n,maxHp:S.maxHp/S.n,hpEnd:S.hpEnd/S.n,ref:R,
+      byType:Object.fromEntries(Object.entries(S.byType).map(([k,v])=>[k,{win:v.w/v.g,n:v.g}])),
+      loadout:S.loadout,
+      roles:S.role.map((q,i)=>({id:c.ids[i],dmgShare:q.dmg/tot,dmg:q.dmg/S.n,heal:q.heal/S.n,shield:q.shield/S.n,firstPct:S.withKo?q.first/S.withKo:0,fallPct:q.fall/S.n,rev:q.rev/S.n}))};
+    return out;
+  }
+  /* duel direct entre deux équipes (même moteur, côtés alternés) */
+  function h2h(a,b,N,mode){
+    const A={ids:a.ids,k:a.k,p:makePlayer(a.ids,mode)},Bt={ids:b.ids,k:b.k,p:makePlayer(b.ids,mode)};
+    return seeded("H|"+a.k+">"+b.k+"|"+mode,()=>duelWins(A,Bt,N))/N;
+  }
+  return{run,profile,h2h,makePlayer,candidates,buildRefs,duelWins,towerOnce,seeded,hash};
 }
 return{create,ROLES,seeded,hash,rng};
+})();
+
+
+/* ============================================================
+   EXPLICATIONS « pourquoi cette équipe » — chaque phrase vient soit des vraies compétences
+   (effets lus dans les données du moteur, aucun texte par défaut inventé), soit de mesures
+   faites sur des centaines de vrais combats (profil). Rien n'est affirmé sans preuve.
+   ============================================================ */
+const SGX=(function(){
+const CATS=["defense","soutien","attaque"];
+const ROLE_CAT=["defense","soutien","attaque"];            // défenseur, soutien, attaquant
+const pc=v=>Math.round(v*100);
+const num=(v,L)=>{const s=String(Math.round(v*10)/10);return L==="fr"?s.replace(".",","):s};
+const T={
+ fr:{
+  poison:"venin",bleed:"saignement",
+  dmg:"inflige des dégâts",shield:"ajoute de la garde (réduit les dégâts reçus)",
+  heal:"soigne l'allié le plus blessé",healAll:"soigne toute l'équipe",
+  revive:p=>"réanime un allié tombé ("+p+" % de ses PV) ; sinon soigne l'allié le plus blessé",
+  dbl:v=>v+" % de chances de frapper deux fois (dégâts ×2)",crit:v=>v+" % de coup critique (×1,5)",
+  rage:p=>"+"+p+" % de dégâts quand il est sous la moitié de ses PV",ls:p=>"se soigne de "+p+" % des dégâts infligés",
+  lsS:p=>"se soigne de "+p+" % de ce qu'il soigne",
+  dot:(k,p,t)=>k+" : "+p+" % des dégâts par tour pendant "+t+" tours",
+  fort:v=>v+" % de chances de doubler la garde",open:"garde ×1,5 pendant les 3 premiers tours",dodge:v=>v+" % de chances d'esquiver complètement le coup",
+  share:p=>"encaisse "+p+" % des coups visant un allié",refl:p=>"renvoie en dégâts "+p+" % de sa puissance",thorn:p=>"renvoie "+p+" % des dégâts qu'il encaisse",
+  critH:v=>v+" % de soin critique (soin doublé)",resc:v=>"soin ×"+String(v).replace(".",",")+" si l'allié est sous la moitié de ses PV",chain:p=>"soigne aussi un 2ᵉ allié ("+p+" % du soin)",
+  enc:p=>"+"+p+" % de dégâts pour les attaques qui suivent dans le même tour",grd:p=>"+"+p+" % de garde pour les défenses qui suivent dans le même tour",
+  vuln:(p,t)=>"l'ennemi prend +"+p+" % de dégâts pendant "+t+" tours",fear:(p,t)=>"l'ennemi frappe "+p+" % moins fort pendant "+t+" tours",
+  trio:(ty,p)=>ty+" — trio du même type : +"+p+" % de PV et de puissance sur toutes les compétences.",mixed:"Types mélangés : pas de bonus de trio.",
+  edge:(a,b)=>a+" bat "+b+" : +15 % de dégâts infligés, −10 % subis.",
+  role:{defense:"Défenseur",soutien:"Soutien",attaque:"Attaquant"},
+  fit:(n,cat)=>"Bonus de rôle (+15 de chance, ×1,25 de puissance) : appliqué à "+(n>1?"ses "+n+" compétences ":"sa seule compétence ")+cat+".",
+  nofit:cat=>"Aucune compétence "+cat+" : le bonus de rôle ne lui sert à rien ici, il combat avec ses autres compétences.",
+  catn:{defense:"de défense",soutien:"de soutien",attaque:"d'attaque"},
+  meas:"En combat",dshare:p=>p+" % des dégâts directs de l'équipe",nodmg:"n'inflige aucun dégât direct",
+  heals:(h,p)=>"soigne "+h+" PV par combat (≈ "+p+" % des PV de l'équipe)",noheal:"ne soigne rien",
+  shd:s=>"ajoute "+s+" points de garde par combat",noshd:"n'ajoute aucune garde",
+  first:p=>"tombe en premier dans "+p+" % des combats",firstNever:"ne tombe presque jamais en premier",
+  revn:r=>"réanime en moyenne "+r+" fois par combat",
+  skills:"Compétences avec un effet",plain:(n,cat)=>n+" compétence"+(n>1?"s":"")+" "+({attaque:"d'attaque",defense:"de défense"}[cat])+" simple"+(n>1?"s":"")+" ("+(cat==="attaque"?"dégâts":"garde")+", sans effet spécial)",
+  vsT:"Résultats contre chaque type d'équipe",best:"Point fort",worst:"Point faible",
+  tn:{terre:"Terre",air:"Air",eau:"Eau",mix:"Mixtes"},
+  win:(p,n,t,m)=>"Sur "+n+" combats simulés contre des équipes de référence "+(m==="max"?"du jeu (niveau 10, 5⭐)":"fortes de ton niveau")+" : "+p+" % de victoires, "+t+" tours par combat en moyenne. (Le « Duels » du haut compare plutôt les meilleures équipes entre elles.)",
+  h2h:(p,n)=>"Face à la 1ʳᵉ équipe, en duel direct ("+n+" combats) : "+p+" % de victoires.",
+  weak:(nm,p)=>"Maillon faible : "+nm+" (premier à tomber dans "+p+" % des combats)."
+ },
+ en:{
+  poison:"venom",bleed:"bleed",
+  dmg:"deals damage",shield:"adds guard (reduces damage taken)",
+  heal:"heals the most wounded ally",healAll:"heals the whole team",
+  revive:p=>"revives a fallen ally ("+p+"% of its HP); otherwise heals the most wounded ally",
+  dbl:v=>v+"% chance to strike twice (×2 damage)",crit:v=>v+"% critical hit chance (×1.5)",
+  rage:p=>"+"+p+"% damage while under half HP",ls:p=>"heals itself for "+p+"% of the damage dealt",
+  lsS:p=>"heals itself for "+p+"% of what it heals",
+  dot:(k,p,t)=>k+": "+p+"% of the damage per turn for "+t+" turns",
+  fort:v=>v+"% chance to double the guard",open:"guard ×1.5 during the first 3 turns",dodge:v=>v+"% chance to completely dodge the hit",
+  share:p=>"soaks "+p+"% of hits aimed at an ally",refl:p=>"deals back "+p+"% of its power as damage",thorn:p=>"deals back "+p+"% of the damage it takes",
+  critH:v=>v+"% critical heal chance (doubled heal)",resc:v=>"heal ×"+v+" if the ally is under half HP",chain:p=>"also heals a 2nd ally ("+p+"% of the heal)",
+  enc:p=>"+"+p+"% damage for the attacks that follow in the same turn",grd:p=>"+"+p+"% guard for the defenses that follow in the same turn",
+  vuln:(p,t)=>"the enemy takes +"+p+"% damage for "+t+" turns",fear:(p,t)=>"the enemy hits "+p+"% weaker for "+t+" turns",
+  trio:(ty,p)=>ty+" — same-type trio: +"+p+"% HP and power on every skill.",mixed:"Mixed types: no trio bonus.",
+  edge:(a,b)=>a+" beats "+b+": +15% damage dealt, −10% taken.",
+  role:{defense:"Defender",soutien:"Support",attaque:"Attacker"},
+  fit:(n,cat)=>"Role bonus (+15 chance, ×1.25 power): applied to its "+n+" "+cat+" skill"+(n>1?"s":"")+".",
+  nofit:cat=>"No "+cat+" skill: the role bonus does nothing for it here, it fights with its other skills.",
+  catn:{defense:"defense",soutien:"support",attaque:"attack"},
+  meas:"In battle",dshare:p=>p+"% of the team's direct damage",nodmg:"deals no direct damage",
+  heals:(h,p)=>"heals "+h+" HP per battle (≈ "+p+"% of the team's HP)",noheal:"heals nothing",
+  shd:s=>"adds "+s+" guard points per battle",noshd:"adds no guard",
+  first:p=>"is the first to fall in "+p+"% of battles",firstNever:"almost never falls first",
+  revn:r=>"revives "+r+" times per battle on average",
+  skills:"Skills with an effect",plain:(n,cat)=>n+" plain "+({attaque:"attack",defense:"defense"}[cat])+" skill"+(n>1?"s":"")+" ("+(cat==="attaque"?"damage":"guard")+", no special effect)",
+  vsT:"Results against each team type",best:"Strength",worst:"Weakness",
+  tn:{terre:"Earth",air:"Air",eau:"Water",mix:"Mixed"},
+  win:(p,n,t,m)=>"Over "+n+" simulated battles against "+(m==="max"?"the game's reference teams (level 10, 5⭐)":"strong reference teams at your level")+": "+p+"% wins, "+t+" turns per battle on average. (The “Duels” figure above compares the best teams against each other.)",
+  h2h:(p,n)=>"Head-to-head against the 1st team ("+n+" battles): "+p+"% wins.",
+  weak:(nm,p)=>"Weak link: "+nm+" (first to fall in "+p+"% of battles)."
+ }
+};
+/* décrit les effets d'UNE compétence ; renvoie {parts:[...],used:Set(clés lues)} — toute clé non lue est signalée par l'audit */
+function describe(cat,fx,L){
+  const D=T[L]||T.en,parts=[],used=new Set();fx=fx||{};
+  const u=k=>{used.add(k);return fx[k]};
+  if(cat==="attaque"){
+    if(fx.doubleChance)parts.push(D.dbl(u("doubleChance")));
+    if(fx.critChance)parts.push(D.crit(u("critChance")));
+    if(fx.rage)parts.push(D.rage(pc(u("rage"))));
+    if(fx.lifesteal)parts.push(D.ls(pc(u("lifesteal"))));
+    if(fx.dot)parts.push(D.dot(D[fx.dot.kind]||fx.dot.kind,pc(fx.dot.frac),fx.dot.turns)),used.add("dot");
+  }else if(cat==="defense"){
+    if(fx.fortify)parts.push(D.fort(u("fortify")));
+    if(fx.opening){parts.push(D.open);used.add("opening")}
+    if(fx.dodge)parts.push(D.dodge(u("dodge")));
+    if(fx.share)parts.push(D.share(pc(u("share"))));
+    if(fx.reflect)parts.push(D.refl(pc(u("reflect"))));
+    if(fx.thorns)parts.push(D.thorn(pc(u("thorns"))));
+  }else{
+    const pure=!!(fx.encourage||fx.guard)&&!fx.revive&&!fx.teamWide;
+    if(fx.revive){parts.push(D.revive(pc(fx.reviveFraction||.4)));used.add("revive");used.add("reviveFraction")}
+    else if(fx.teamWide){parts.push(D.healAll);used.add("teamWide")}
+    else if(!pure)parts.push(D.heal);
+    if(!pure){
+      if(fx.critHeal)parts.push(D.critH(u("critHeal")));
+      if(fx.rescue)parts.push(D.resc(u("rescue")));
+      if(fx.chainHeal)parts.push(D.chain(pc(u("chainHeal"))));
+      if(fx.lifesteal)parts.push(D.lsS(pc(u("lifesteal"))));
+    }
+    if(fx.encourage)parts.push(D.enc(pc(u("encourage"))));
+    if(fx.guard)parts.push(D.grd(pc(u("guard"))));
+    if(pure&&fx.lifesteal)used.add("lifesteal");
+  }
+  // effets sur l'ennemi : possibles quelle que soit la catégorie
+  if(fx.vuln){parts.push(D.vuln(pc(fx.vuln.pct),fx.vuln.turns));used.add("vuln")}
+  if(fx.fear){parts.push(D.fear(pc(fx.fear.pct),fx.fear.turns));used.add("fear")}
+  return{parts,used};
+}
+/* clés des données qui ne sont lues par aucune description (sert à l'audit) */
+function unhandled(cat,fx,L){const r=describe(cat,fx,L);return Object.keys(fx||{}).filter(k=>!r.used.has(k)&&!((cat==="attaque"&&k==="dot")))}
+
+function explain(c,mode,ctx){
+  const L=T[ctx.lang]?ctx.lang:"en",D=T[L],out=[];const prof=c.prof;
+  const A=c.ids;const types=A.map(i=>ctx.type(i));
+  const same=types[0]&&types.every(x=>x===types[0]);
+  out.push(same?D.trio(ctx.typeEmo(types[0])+" "+ctx.typeName(types[0]),Math.round((ctx.trio(types[0])-1)*100)):D.mixed);
+  if(prof){
+    out.push(D.win(pc(prof.win),prof.n,num(prof.turns,L),mode));
+    if(ctx.h2h!=null)out.push(D.h2h(pc(ctx.h2h),ctx.h2hN));
+  }
+  A.forEach((id,i)=>{
+    const cat=ROLE_CAT[i];const st=ctx.stars(id,mode);
+    let h=ctx.catEmo(cat)+" <b>"+D.role[cat]+"</b> — "+ctx.esc(ctx.name(id))+(st?" "+"⭐".repeat(st):"");
+    const lines=[];
+    const sk=prof?prof.loadout.filter(l=>l.role==="defenseur"?i===0:l.role==="soutien"?i===1:i===2):[];
+    // 1) ce qu'on a mesuré
+    if(prof){
+      const r=prof.roles[i],m=[];
+      m.push(r.dmgShare>.005?D.dshare(pc(r.dmgShare)):D.nodmg);
+      m.push(r.heal>.5?D.heals(Math.round(r.heal),Math.round(100*r.heal/Math.max(1,prof.maxHp))):D.noheal);
+      m.push(r.shield>.5?D.shd(Math.round(r.shield)):D.noshd);
+      if(r.rev>.02)m.push(D.revn(num(r.rev,L)));
+      lines.push("<b>"+D.meas+" :</b> "+m.join(" · ")+".");
+    }
+    // 2) bonus de rôle réel
+    if(prof){
+      const nb=sk.filter(l=>l.cat===cat).length;
+      lines.push(nb?D.fit(nb,D.catn[cat]):D.nofit(D.catn[cat]));
+    }
+    // 3) effets réels de ses compétences (toutes sont utilisées en combat)
+    if(prof){
+      const items=[],plainBy={attaque:0,defense:0};
+      for(const l of sk){
+        const d=describe(l.cat,l.fx,L);
+        if(!d.parts.length){plainBy[l.cat]=(plainBy[l.cat]||0)+1;continue}
+        items.push({cat:l.cat,txt:"<i>"+ctx.esc(l.name)+"</i> ("+l.rate+" % de déclenchement) : "+d.parts.join(" ; ")});
+        if(L!=="fr")items[items.length-1].txt="<i>"+ctx.esc(l.name)+"</i> ("+l.rate+"% trigger): "+d.parts.join("; ");
+      }
+      items.sort((a,b)=>(b.cat===cat)-(a.cat===cat));
+      if(items.length)lines.push("<b>"+D.skills+" :</b><br>• "+items.slice(0,6).map(x=>x.txt).join("<br>• "));
+      for(const k of ["attaque","defense"])if(plainBy[k])lines.push(D.plain(plainBy[k],k)+".");
+    }
+    out.push(h+"<br><span class='sgsub'>"+lines.join("<br>")+"</span>");
+  });
+  if(prof){
+    const tw=Object.entries(prof.byType).filter(([k,v])=>v.n>=20).sort((a,b)=>b[1].win-a[1].win);
+    if(tw.length>=2){
+      out.push("<b>"+D.vsT+" :</b> "+tw.map(([k,v])=>D.tn[k]+" "+pc(v.win)+" %").join(" · ")+". "+D.best+" : "+D.tn[tw[0][0]]+" · "+D.worst+" : "+D.tn[tw[tw.length-1][0]]+".");
+    }
+    const worst=prof.roles.map((r,i)=>({i,p:r.firstPct})).sort((a,b)=>b.p-a.p)[0];
+    if(worst&&worst.p>.4)out.push(D.weak(ctx.esc(ctx.name(A[worst.i])),pc(worst.p)));
+  }
+  if(same){out.push(D.edge(ctx.typeEmo(types[0]),ctx.typeEmo(ctx.beats(types[0]))))}
+  return out;
+}
+return{describe,unhandled,explain,T};
 })();
 
 
@@ -3323,7 +3541,21 @@ function sgStart(){
   SG={state:"run",sig,res:null,prog:0,total:100};
   const alreadyMax=own.every(id=>((P.stars&&P.stars[id])||0)>=(DATA.stars||5)&&ArenaSim.allSkillsForAnimal(ArenaSim.ANIMALS[id]).every(sk=>((P.levels&&P.levels[id]&&P.levels[id][sk.id])||1)>=10));
   const modes=alreadyMax?["now"]:["now","max"];
-  const results={};let mi=0,gen=eng.run(modes[0],B);
+  const results={};let mi=0,gen=eng.run(modes[0],B),prof=null;
+  const PHASES=modes.length+1;
+  // dernière étape : pour chaque équipe affichée, des centaines de vrais combats pour MESURER ce que fait chaque animal (c'est là-dessus que s'appuient les explications)
+  function* profAll(){
+    const jobs=[];
+    for(const m of modes){const R=results[m];R.picks.forEach((p,i)=>jobs.push({m,p,i,R}));if(R.cur&&!R.picks.some(p=>p.c.k===R.cur.k))jobs.push({m,p:{c:R.cur},i:-1,R})}
+    let n=0;
+    for(const j of jobs){
+      const g=eng.profile(j.p.c,j.m,400);let r;
+      while(!(r=g.next()).done)yield n/jobs.length;
+      j.p.c.prof=r.value;
+      if(j.i>0){j.p.c.h2h=eng.h2h(j.p.c,j.R.picks[0].c,300,j.m);j.p.c.h2hN=300}
+      n++;yield n/jobs.length;
+    }
+  }
   const finish=()=>{if(alreadyMax)results.max=results.now;SG={state:"done",sig,res:Object.assign({},results,{tested:results.now.tested,owned:own.length}),prog:0,total:0};if(view==="ideas")renderIdeas()};
   const step=()=>{
     if(SG.sig!==sig||SG.state!=="run")return;
@@ -3331,11 +3563,14 @@ function sgStart(){
     while(performance.now()-t0<40){
       const r=gen.next();
       if(r.done){
+        if(prof){finish();return}
         results[modes[mi]]=r.value;mi++;
-        if(mi>=modes.length){finish();return}
+        if(mi>=modes.length){prof=profAll();gen=prof;continue}
         gen=eng.run(modes[mi],B);continue;
       }
-      const v=r.value;if(v&&v.total){SG.prog=Math.round(100*((mi+Math.min(1,v.done/v.total))/modes.length))}
+      const v=r.value;
+      if(prof){SG.prog=Math.round(100*((modes.length+Math.min(1,+v||0))/PHASES))}
+      else if(v&&v.total){SG.prog=Math.round(100*((mi+Math.min(1,v.done/v.total))/PHASES))}
     }
     sgProgress();
     setTimeout(step,0);
@@ -3393,13 +3628,17 @@ function sgNeeds(c){
   }
   return out;
 }
+function sgExplainAny(c,mode){
+  if(!c.prof)return sgExplain(c,mode);
+  return SGX.explain(c,mode,{lang:lang,h2h:c.h2h==null?null:c.h2h,h2hN:c.h2hN,type:i=>byId[i].type,typeEmo:ty=>TYPE_EMO[ty]||"",typeName:ty=>(t().types||{})[ty]||ty,trio:ty=>DATA.trio[ty],beats:ty=>DATA.beats[ty],stars:(id,m)=>m==='max'?(DATA.stars||5):((P.stars&&P.stars[id])||0),catEmo:cat=>CAT_EMO[cat],name:id=>byId[id].name,esc:esc});
+}
 function sgCards(R,mode){
   const T=sgT();let h="";
   R.picks.forEach((p,idx)=>{
     const c=p.c;const A=c.ids.map(i=>byId[i]);const ty=A[0].type;const same=ty&&A.every(a=>a.type===ty);
     h+='<div class="sgc"><h4>'+p.keys.map(k=>T.lab[k]).join(" + ")+'</h4><p class="hint" style="margin:-2px 0 8px">'+p.keys.map(k=>T.why[k]).join(" ")+'</p>'+
       trioCardHtml({d:A[0],s:A[1],a:A[2]},same?ty:"line",'<span class="pill">'+T.duels+' '+Math.round(c.duel*100)+'% <small>±'+Math.max(1,Math.round(196*(c.duelSE||0)))+'</small></span><span class="pill">'+T.tower+' '+Math.round(c.pve)+' <small>±'+Math.max(1,Math.round(1.96*(c.pveSE||0)))+'</small></span><button class="pill" data-b="'+c.ids.join(",")+'">'+T.test+'</button>',idx===0)+
-      '<ul class="sgw">'+sgExplain(c,mode).map(x=>'<li>'+x+'</li>').join("")+'</ul>';
+      '<ul class="sgw">'+sgExplainAny(c,mode).map(x=>'<li>'+x+'</li>').join("")+'</ul>';
     if(mode==="max"){
       const nd=sgNeeds(c);
       h+='<p class="hint" style="margin:6px 0 0"><b>'+T.need+'</b> '+(nd.length?nd.join(" ; "):T.needNone)+'</p>';
@@ -3409,7 +3648,7 @@ function sgCards(R,mode){
   if(R.tie)h+='<p class="hint">'+(lang==="fr"?"⚖️ Les deux premières équipes sont à égalité : l'écart entre elles est plus petit que la marge d'erreur (±). Choisis celle que tu préfères jouer.":"⚖️ The top two teams are tied: the gap is smaller than the margin of error (±). Pick whichever you prefer to play.")+'</p>';
   return h;
 }
-const SG_VER="v5 · 18/10 · entonnoir + marges d'erreur";
+const SG_VER="v6 · 18/10 · explications mesurées";
 function sgHtml(){
   const T=sgT();
   let h='<div class="sg"><h3 class="sec" style="margin-top:6px">'+T.t+'</h3><p class="hint" style="margin-top:-2px">'+T.lead+'</p><p class="hint" style="font-size:11px;opacity:.7;margin-top:-4px">'+SG_VER+'</p>';
