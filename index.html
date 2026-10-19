@@ -2955,7 +2955,7 @@ const SG_T={
   fr:{t:"🧠 Meilleures formations avec TES animaux",lead:"Je teste de vraies équipes avec tes animaux, tes niveaux de compétences, tes étoiles et tes armes équipées — le même moteur que le bot — puis je t'explique pourquoi elles sont bonnes.",go:"Calculer mes meilleures formations",again:"Recalculer",run:(d,n)=>"Calcul en cours… "+d+" %",
     few:"Il te faut au moins 3 animaux pour former une équipe. Explore pour en débloquer !",noprof:"Connecte-toi (onglet « Moi ») pour que je teste TES animaux.",
     info:(n,m)=>n+" animaux possédés · "+m+" équipes testées · « Duels » = voir la légende sous chaque titre, « Tour » = étage atteint en moyenne sur plusieurs vraies montées (vie reportée, reliques)",
-    upg:"🚀 La même équipe une fois montée (niv. 10, 5⭐) :",upgShort:"une fois montée :",nowT:"✅ Les meilleures équipes MAINTENANT",nowH:"Avec tes niveaux, tes étoiles et tes armes d'aujourd'hui. « Duels » = victoires contre les autres meilleures équipes possibles avec tes animaux actuels.",maxT:"🚀 Le POTENTIEL si tu améliores tes animaux",maxH:"Les mêmes animaux (ceux que tu possèdes), mais au niveau 10 de compétences et 5 étoiles : les formations à viser sur la durée. « Duels » = victoires contre les meilleures équipes DU JEU (tous les animaux, niveau 10, 5⭐).",need:"Pour y arriver :",needNone:"rien, tes animaux sont déjà au maximum ✅",lvAvg:v=>"compétences niveau "+v+" → 10",
+    upg:"🚀 La même équipe une fois montée (niv. 10, 5⭐) :",upgShort:"une fois montée :",nowT:"✅ Les meilleures équipes MAINTENANT",nowH:"Avec tes niveaux, tes étoiles et tes armes d'aujourd'hui. « Duels » = victoires contre les autres meilleures équipes possibles avec tes animaux actuels.",maxT:"🚀 Le POTENTIEL si tu améliores tes animaux",maxH:"Les mêmes animaux (ceux que tu possèdes), mais au niveau 10 de compétences, 5 étoiles ET avec l'arme légendaire de chacun équipée : les formations à viser sur la durée. « Duels » = victoires contre les meilleures équipes DU JEU (tous les animaux, niveau 10, 5⭐, armes légendaires).",need:"Pour y arriver :",needNone:"rien, tes animaux sont déjà au maximum ✅",lvAvg:v=>"compétences niveau "+v+" → 10",
     lab:{all:"🏆 La meilleure globalement",duel:"⚔️ La meilleure en duel",tower:"🗼 La meilleure pour la Tour",alt:"💡 Une bonne alternative"},
     why:{all:"Le meilleur mélange entre duels et Tour.",duel:"Elle gagne le plus de combats contre les autres bonnes équipes.",tower:"Elle monte le plus haut dans la Tour (vie reportée d'étage en étage, reliques).",alt:"Presque aussi forte, avec d'autres animaux."},
     duels:"Duels",tower:"Tour : étage ≈",test:"Tester dans le simulateur",use:"Dans le bot :",
@@ -2969,7 +2969,7 @@ const SG_T={
   en:{t:"🧠 Best formations with YOUR animals",lead:"I test real teams built from your animals, with your skill levels, stars and equipped weapons — the same engine as the bot — then explain why they're good.",go:"Calculate my best formations",again:"Recalculate",run:(d,n)=>"Calculating… "+d+" %",
     few:"You need at least 3 animals to form a team. Go explore to unlock more!",noprof:"Log in (the “Me” tab) so I can test YOUR animals.",
     info:(n,m)=>n+" animals owned · "+m+" teams simulated · “Duels” = see the legend under each title, “Tower” = average floor reached over several real climbs (carried-over HP, relics)",
-    upg:"🚀 The same team once upgraded (lvl 10, 5⭐):",upgShort:"once upgraded:",nowT:"✅ Best teams RIGHT NOW",nowH:"With your current levels, stars and weapons. “Duels” = wins against the other best teams possible with your current animals.",maxT:"🚀 POTENTIAL if you upgrade your animals",maxH:"The same animals you own, but at skill level 10 and 5 stars: the line-ups to aim for. “Duels” = wins against the best teams IN THE GAME (all animals, level 10, 5⭐).",need:"To get there:",needNone:"nothing, your animals are already maxed ✅",lvAvg:v=>"skills level "+v+" → 10",
+    upg:"🚀 The same team once upgraded (lvl 10, 5⭐):",upgShort:"once upgraded:",nowT:"✅ Best teams RIGHT NOW",nowH:"With your current levels, stars and weapons. “Duels” = wins against the other best teams possible with your current animals.",maxT:"🚀 POTENTIAL if you upgrade your animals",maxH:"The same animals you own, but at skill level 10, 5 stars AND with each one's legendary weapon equipped: the line-ups to aim for. “Duels” = wins against the best teams IN THE GAME (all animals, level 10, 5⭐, legendary weapons).",need:"To get there:",needNone:"nothing, your animals are already maxed ✅",lvAvg:v=>"skills level "+v+" → 10",
     lab:{all:"🏆 Best all-round",duel:"⚔️ Best for duels",tower:"🗼 Best for the Tower",alt:"💡 A strong alternative"},
     why:{all:"The best mix of duels and Tower.",duel:"Wins the most fights against the other strong teams.",tower:"Climbs the highest in the Tower (HP carried between floors, relics).",alt:"Nearly as strong, with different animals."},
     duels:"Duels",tower:"Tower: floor ≈",test:"Try it in the simulator",use:"In the bot:",
@@ -3086,6 +3086,7 @@ function create(env){
       const lv={};
       for(const sk of Sim.allSkillsForAnimal(an))lv[sk.id]=lvAll!=null?lvAll:(mode==="max"?10:((P.levels&&P.levels[id]&&P.levels[id][sk.id])||1));
       p.animaux[id]={competences:lv};
+      if(env.weapons&&mode==="max"&&Sim.createLegendaryItem){const it=Sim.createLegendaryItem(id);if(it){p.items.push(it);p.equipped[id]=it.instanceId}}
       if(mode!=="max"&&!over){
         const iid=P.equipped&&P.equipped[id];const it=iid&&(P.items||[]).find(x=>x.instanceId===iid);
         if(it&&(it.tier==="legendary"?it.animalId===id:it.category===cat)){p.items.push(Object.assign({},it));p.equipped[id]=it.instanceId}
@@ -3362,7 +3363,7 @@ const num=(v,L)=>{const s=String(Math.round(v*10)/10);return L==="fr"?s.replace(
 const T={
  fr:{
   poison:"venin",bleed:"saignement",
-  dmg:"inflige des dégâts",shield:"ajoute de la garde (réduit les dégâts reçus)",
+  dmg:"inflige des dégâts",dmgLeg:{attaque:"inflige des dégâts",defense:"ajoute de la garde",soutien:"soigne l'allié le plus blessé"},shield:"ajoute de la garde (réduit les dégâts reçus)",
   heal:"soigne l'allié le plus blessé",healAll:"soigne toute l'équipe",
   revive:p=>"réanime un allié tombé ("+p+" % de ses PV) ; sinon soigne l'allié le plus blessé",
   dbl:v=>v+" % de chances de frapper deux fois (dégâts ×2)",crit:v=>v+" % de coup critique (×1,5)",
@@ -3394,7 +3395,7 @@ const T={
  },
  en:{
   poison:"venom",bleed:"bleed",
-  dmg:"deals damage",shield:"adds guard (reduces damage taken)",
+  dmg:"deals damage",dmgLeg:{attaque:"deals damage",defense:"adds guard",soutien:"heals the most wounded ally"},shield:"adds guard (reduces damage taken)",
   heal:"heals the most wounded ally",healAll:"heals the whole team",
   revive:p=>"revives a fallen ally ("+p+"% of its HP); otherwise heals the most wounded ally",
   dbl:v=>v+"% chance to strike twice (×2 damage)",crit:v=>v+"% critical hit chance (×1.5)",
@@ -3498,9 +3499,11 @@ function explain(c,mode,ctx){
       const items=[],plainBy={attaque:0,defense:0};
       for(const l of sk){
         const d=describe(l.cat,l.fx,L);
-        if(!d.parts.length){plainBy[l.cat]=(plainBy[l.cat]||0)+1;continue}
-        items.push({cat:l.cat,txt:"<i>"+ctx.esc(l.name)+"</i> ("+l.rate+" % de déclenchement) : "+d.parts.join(" ; ")});
-        if(L!=="fr")items[items.length-1].txt="<i>"+ctx.esc(l.name)+"</i> ("+l.rate+"% trigger): "+d.parts.join("; ");
+        if(!d.parts.length&&!l.legendary){plainBy[l.cat]=(plainBy[l.cat]||0)+1;continue}
+        if(!d.parts.length&&l.legendary){d.parts.push(D.dmgLeg[l.cat])}
+        const wp=l.legendary?"🗡️ ":"";
+        items.push({cat:l.cat,txt:wp+"<i>"+ctx.esc(l.name)+"</i> ("+l.rate+" % de déclenchement) : "+d.parts.join(" ; ")});
+        if(L!=="fr")items[items.length-1].txt=wp+"<i>"+ctx.esc(l.name)+"</i> ("+l.rate+"% trigger): "+d.parts.join("; ");
       }
       items.sort((a,b)=>(b.cat===cat)-(a.cat===cat));
       if(items.length)lines.push("<b>"+D.skills+" :</b><br>• "+items.slice(0,6).map(x=>x.txt).join("<br>• "));
@@ -3531,46 +3534,50 @@ function sgStart(){
   const sig=sgSig();
   if(own.length<3){SG={state:"done",sig,res:{few:true,owned:own.length},prog:0,total:0};renderIdeas();return}
   const f=P.formation||{};
-  const eng=SGE.create({Sim:ArenaSim,DATA,byId,P,own,seeds:SG_SEEDS,cur:[f.defenseur,f.soutien,f.attaquant]});
-  // on mesure la vitesse de cet appareil pour régler le nombre de combats (≈ 8 s par partie)
-  // (réglé une seule fois par appareil : sinon deux calculs successifs pourraient donner des résultats un peu différents)
+  const base={Sim:ArenaSim,DATA,byId,P,seeds:SG_SEEDS,weapons:true};      // weapons : le « potentiel » compte l'arme légendaire de chaque animal
+  const eng=SGE.create(Object.assign({},base,{own,cur:[f.defenseur,f.soutien,f.attaquant]}));
+  // la vitesse de l'appareil règle le nombre de combats (≈ 8 s par partie) — mesurée UNE fois, pour que deux calculs successifs donnent le même résultat
   let B=0;
   try{B=+localStorage.getItem("sgB")||0}catch(e){}
   if(!SG_B&&!B){try{const q=eng.makePlayer(own.slice(0,3),"now"),t0=performance.now();eng.duelWins({p:q},{p:q},80);const ms=Math.max(.02,(performance.now()-t0)/80);const raw=8000/ms;B=raw>=60000?60000:raw>=45000?45000:30000;try{localStorage.setItem("sgB",String(B))}catch(e){}}catch(e){B=45000}}
   if(SG_B)B=SG_B;else{if(!B)B=45000;SG_B=B}
   SG={state:"run",sig,res:null,prog:0,total:100};
-  const alreadyMax=own.every(id=>((P.stars&&P.stars[id])||0)>=(DATA.stars||5)&&ArenaSim.allSkillsForAnimal(ArenaSim.ANIMALS[id]).every(sk=>((P.levels&&P.levels[id]&&P.levels[id][sk.id])||1)>=10));
-  const modes=alreadyMax?["now"]:["now","max"];
-  const results={};let mi=0,gen=eng.run(modes[0],B),prof=null;
-  const PHASES=modes.length+1;
+  const modes=["now","max"];
+  // meilleure équipe de chaque TYPE (trio complet, avec le bonus de type) parmi tes animaux de ce type
+  const types=["terre","air","eau"].filter(ty=>own.filter(i=>byId[i].type===ty).length>=3).map(ty=>({ty,eng:SGE.create(Object.assign({},base,{own:own.filter(i=>byId[i].type===ty),cur:null,maxTeams:3000}))}));
+  const tasks=[...modes.map(m=>({k:"mode",m,w:1})),...types.map(x=>({k:"type",ty:x.ty,eng:x.eng,w:.35})),{k:"prof",w:.7}];
+  const totalW=tasks.reduce((a,t)=>a+t.w,0);
+  const results={types:{}};let ti=0,doneW=0;
   // dernière étape : pour chaque équipe affichée, des centaines de vrais combats pour MESURER ce que fait chaque animal (c'est là-dessus que s'appuient les explications)
   function* profAll(){
     const jobs=[];
-    for(const m of modes){const R=results[m];R.picks.forEach((p,i)=>jobs.push({m,p,i,R}));if(R.cur&&!R.picks.some(p=>p.c.k===R.cur.k))jobs.push({m,p:{c:R.cur},i:-1,R})}
+    for(const m of modes){const R=results[m];R.picks.forEach((p,i)=>jobs.push({m,p,i,R,e:eng}));if(R.cur&&!R.picks.some(p=>p.c.k===R.cur.k))jobs.push({m,p:{c:R.cur},i:-1,R,e:eng})}
+    for(const x of types){const R=results.types[x.ty];if(R&&R.picks.length)jobs.push({m:"max",p:R.picks[0],i:0,R,e:x.eng})}
     let n=0;
     for(const j of jobs){
-      const g=eng.profile(j.p.c,j.m,400);let r;
+      const g=j.e.profile(j.p.c,j.m,400);let r;
       while(!(r=g.next()).done)yield n/jobs.length;
       j.p.c.prof=r.value;
-      if(j.i>0){j.p.c.h2h=eng.h2h(j.p.c,j.R.picks[0].c,300,j.m);j.p.c.h2hN=300}
+      if(j.i>0){j.p.c.h2h=j.e.h2h(j.p.c,j.R.picks[0].c,300,j.m);j.p.c.h2hN=300}
       n++;yield n/jobs.length;
     }
   }
-  const finish=()=>{if(alreadyMax)results.max=results.now;SG={state:"done",sig,res:Object.assign({},results,{tested:results.now.tested,owned:own.length}),prog:0,total:0};if(view==="ideas")renderIdeas()};
+  const startTask=t=>t.k==="mode"?eng.run(t.m,B):t.k==="type"?t.eng.run("max",Math.round(B*.35)):profAll();
+  let gen=startTask(tasks[0]);
+  const finish=()=>{SG={state:"done",sig,res:Object.assign({},results,{tested:results.now.tested,owned:own.length}),prog:0,total:0};if(view==="ideas")renderIdeas()};
   const step=()=>{
     if(SG.sig!==sig||SG.state!=="run")return;
     const t0=performance.now();
     while(performance.now()-t0<40){
-      const r=gen.next();
+      const t=tasks[ti],r=gen.next();
       if(r.done){
-        if(prof){finish();return}
-        results[modes[mi]]=r.value;mi++;
-        if(mi>=modes.length){prof=profAll();gen=prof;continue}
-        gen=eng.run(modes[mi],B);continue;
+        if(t.k==="mode")results[t.m]=r.value;else if(t.k==="type")results.types[t.ty]=r.value;
+        doneW+=t.w;ti++;
+        if(ti>=tasks.length){finish();return}
+        gen=startTask(tasks[ti]);continue;
       }
-      const v=r.value;
-      if(prof){SG.prog=Math.round(100*((modes.length+Math.min(1,+v||0))/PHASES))}
-      else if(v&&v.total){SG.prog=Math.round(100*((mi+Math.min(1,v.done/v.total))/PHASES))}
+      const v=r.value;const fr=t.k==="prof"?Math.min(1,+v||0):(v&&v.total?Math.min(1,v.done/v.total):0);
+      SG.prog=Math.round(100*(doneW+fr*t.w)/totalW);
     }
     sgProgress();
     setTimeout(step,0);
@@ -3578,6 +3585,7 @@ function sgStart(){
   renderIdeas();
   setTimeout(step,20);
 }
+
 function sgFinish(fin,curKey,n){
   fin=fin.map(c=>({ids:c.ids.slice(),k:c.k,duel:c.g2?c.w2/c.g2:0,pve:c.pve2,score:0}));
   for(const c of fin)c.score=.5*c.duel+.5*Math.min(1,c.pve/45);
@@ -3624,6 +3632,18 @@ function sgNeeds(c){
     const parts=[];
     if(st<mx)parts.push(st+"⭐ → "+mx+"⭐");
     if(avg<9.95)parts.push(T.lvAvg(avg.toFixed(1)));
+    const w=a.weapon;
+    if(w){
+      const it=(P.items||[]).find(x=>x.tier==="legendary"&&x.animalId===id);
+      const eq=it&&P.equipped&&P.equipped[id]===it.instanceId;
+      const fr=lang==="fr";
+      if(!it)parts.push("🗡️ "+(fr?"arme légendaire à obtenir : ":"legendary weapon to get: ")+w.name);
+      else{
+        if(!eq)parts.push("🗡️ "+(fr?"équipe ":"equip ")+w.name);
+        const wl=(lv[w.skill&&w.skill.id])||1;
+        if(w.skill&&wl<10)parts.push("🗡️ "+w.skill.n+" "+wl+" → 10");
+      }
+    }
     if(parts.length)out.push(esc(a.name)+" : "+parts.join(" · "));
   }
   return out;
@@ -3648,7 +3668,7 @@ function sgCards(R,mode){
   if(R.tie)h+='<p class="hint">'+(lang==="fr"?"⚖️ Les deux premières équipes sont à égalité : l'écart entre elles est plus petit que la marge d'erreur (±). Choisis celle que tu préfères jouer.":"⚖️ The top two teams are tied: the gap is smaller than the margin of error (±). Pick whichever you prefer to play.")+'</p>';
   return h;
 }
-const SG_VER="v6 · 18/10 · explications mesurées";
+const SG_VER="v7 · 19/10 · armes légendaires + types";
 function sgHtml(){
   const T=sgT();
   let h='<div class="sg"><h3 class="sec" style="margin-top:6px">'+T.t+'</h3><p class="hint" style="margin-top:-2px">'+T.lead+'</p><p class="hint" style="font-size:11px;opacity:.7;margin-top:-4px">'+SG_VER+'</p>';
@@ -3670,7 +3690,21 @@ function sgHtml(){
   if(weak)h+='<p class="hint">'+T.tipLv(esc(byId[weak].name))+'</p>';
   // 2) potentiel
   h+='<h3 class="sec" style="margin-top:18px">'+T.maxT+'</h3><p class="hint" style="margin:-2px 0 6px">'+T.maxH+'</p>'+sgCards(R.max,"max");
+  h+=sgTypesHtml(R);
   h+='<button class="btn2" id="sgGo">'+T.again+'</button></div>';
+  return h;
+}
+function sgTypesHtml(R){
+  const tys=["terre","air","eau"].filter(ty=>R.types&&R.types[ty]&&R.types[ty].picks.length);
+  if(!tys.length)return"";
+  const fr=lang==="fr";
+  let h='<h3 class="sec" style="margin-top:18px">'+(fr?"🧬 Le POTENTIEL, type par type":"🧬 POTENTIAL, type by type")+'</h3><p class="hint" style="margin:-2px 0 6px">'+(fr?"La meilleure équipe de chaque type (trio complet = bonus de type), parmi tes animaux, au niveau 10, 5⭐ et avec leurs armes légendaires.":"The best team of each type (full trio = type bonus) among your animals, at level 10, 5⭐ and with their legendary weapons.")+'</p>';
+  for(const ty of tys){
+    const Rt=R.types[ty];const first=Rt.picks[0];
+    h+='<h4 style="margin:12px 0 4px">'+TYPE_EMO[ty]+' '+esc(((t().types)||{})[ty]||ty)+'</h4>'+sgCards({picks:[first],tie:null},"max");
+    const alts=Rt.picks.slice(1).filter(p=>p.keys.some(k=>k==="duel"||k==="tower"));
+    if(alts.length)h+='<p class="hint">'+alts.map(p=>(p.keys.includes("duel")?"⚔️ "+(fr?"En duel":"In duels"):"🗼 "+(fr?"Pour la Tour":"For the Tower"))+" : "+p.c.ids.map(i=>esc(byId[i].name)).join(" / ")+" ("+Math.round(p.c.duel*100)+"% ±"+Math.max(1,Math.round(196*(p.c.duelSE||0)))+", "+(fr?"étage":"floor")+" "+Math.round(p.c.pve)+")").join("<br>")+'</p>';
+  }
   return h;
 }
 function sgBind(root){
