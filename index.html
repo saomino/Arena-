@@ -2447,7 +2447,8 @@ function bestTriosSim(pool,k){
   }
   return keep;
 }
-function famAnimals(ty){return DATA.animals.filter(a=>ty==="jurassik"?!!a.season:a.type===ty)}
+const JUR_IDS=new Set(["triceratops", "ankylosaurus", "parasaurolophus", "brachiosaurus", "tyrannosaurus", "velociraptor", "quetzalcoatlus", "tupandactylus", "archaeopteryx", "microraptor", "pteranodon", "rhamphorhynchus", "spinosaurus", "archelon", "plesiosaurus", "elasmosaurus", "mosasaurus", "liopleurodon"]);
+function famAnimals(ty){return DATA.animals.filter(a=>ty==="jurassik"?(!!a.season||JUR_IDS.has(a.id)):a.type===ty)}
 function famLabel(k){const L=t();return k==="jurassik"?"🦖 Jurassik":TYPE_EMO[k]+" "+L.types[k]}
 function wLabel(ch){const L=t();return ch==="L"?"🗡️ "+L.b_wp_leg:"🗡️ Gold ✦3"}
 function slotHtml(a,roleKey,have,wk){
